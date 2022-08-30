@@ -14,35 +14,39 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
-  });
+});
 
 app.get("/notes", function (req, res) {
     res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
-app.route("/api/notes")
-    .get(function (req, res) {
-        let jsonFilePath = path.join(__dirname, "/db/db.json");
-        let newNote = req.body;
+app.get("/api/notes", function (req, res) {
+    console.log(database);
+    res.json(database);
+})
 
-        let highestId = 99;
-        for (let i = 0; i < database.length; i++) {
-            let individualNote = database[i];
-            if(individualNote.id > highestId) {
-                highestId = individualNote.id;
-            }
+app.post("/api/notes", function (req, res) {
+    let jsonFilePath = path.join(__dirname, "/db/db.json");
+    let newNote = req.body;
+
+    let highestId = 99;
+    for (let i = 0; i < database.length; i++) {
+        let individualNote = database[i];
+        if (individualNote.id > highestId) {
+            highestId = individualNote.id;
         }
+    }
 
-        newNote.id = highestId + 1;
-        database.push(newNote)
-        fs.writeFile(jsonFilePath, JSON.stringify(database), function (err) {
-            if (err) {
-                return console.log(err);
-            }
-            console.log("Your note was saved.");
-        });
-        res.json(newNote);
+    newNote.id = highestId + 1;
+    database.push(newNote)
+    fs.writeFile(jsonFilePath, JSON.stringify(database), function (err) {
+        if (err) {
+            return console.error(err);
+        }
+        console.log("Your note was saved.");
     });
+    res.json(newNote);
+});
 
 app.delete("/api/notes/:id", function (req, res) {
     let jsonFilePath = path.join(__dirname, "/db/db.json");
@@ -52,6 +56,8 @@ app.delete("/api/notes/:id", function (req, res) {
             break;
         }
     }
+
+
     fs.writeFileSync(jsonFilePath, JSON.stringify(database), function (err) {
         if (err) {
             return console.log(err);
@@ -66,4 +72,4 @@ app.delete("/api/notes/:id", function (req, res) {
 
 app.listen(PORT, () => {
     console.log(`App listening at http://localhost:${PORT}`);
-  });
+});
