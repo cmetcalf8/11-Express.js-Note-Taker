@@ -1,9 +1,7 @@
 const express = require('express');
 const path = require('path');
-const api = require('./Develop/public/assets/index.js');
 const fs = require('fs');
-const database = require('mime-db');
-const { rawListeners } = require('process');
+const database = require('./db/db');
 
 const PORT = process.env.PORT || 3001;
 
@@ -15,11 +13,11 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/Develop/public/index.html'));
+    res.sendFile(path.join(__dirname, '/public/index.html'));
   });
 
 app.get("/notes", function (req, res) {
-    res.sendFile(path.join(__dirname, '/Develop/public/notes.html'));
+    res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
 app.route("/api/notes")
